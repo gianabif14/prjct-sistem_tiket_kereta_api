@@ -6,11 +6,14 @@ import exception.SaldoTidakCukupException;
 import java.sql.*;
 import java.util.UUID;
 
+/**
+ * PemesananDAO menangani transaksi pemesanan tiket dengan ACID compliant.
+ */
 public class PemesananDAO {
 
-    public String prosesPemesanan(int idUser, int idJadwal, double totalHarga) 
+    public String prosesPemesanan(int idUser, int idJadwal, double totalHarga)
             throws SQLException, SaldoTidakCukupException, KursiPenuhException {
-        
+
         Connection conn = null;
         String kodeBooking = "BOOK-" + UUID.randomUUID().toString().substring(0, 8).toUpperCase();
 
@@ -52,7 +55,7 @@ public class PemesananDAO {
             return kodeBooking;
 
         } catch (SQLException e) {
-            if (conn != null) conn.rollback(); // ACID: Rollback jika ada error/trigger menolak
+            if (conn != null) conn.rollback(); // ACID: Rollback jika ada error
             throw e;
         } finally {
             if (conn != null) conn.setAutoCommit(true);

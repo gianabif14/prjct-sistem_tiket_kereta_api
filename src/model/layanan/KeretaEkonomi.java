@@ -1,20 +1,20 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package model.layanan;
 
 /**
- *
- * @author giana
+ * KeretaEkonomi mewarisi Kereta tanpa biaya tambahan.
+ * Menerapkan pilar OOP: Inheritance dan Polymorphism.
  */
-public class KeretaEkonomi {
+public class KeretaEkonomi extends Kereta {
 
-    public KeretaEkonomi(String temp, double hargaDasar) {
+    public KeretaEkonomi(String namaKereta, double hargaDasar) {
+        super(namaKereta, hargaDasar);
     }
 
+    /**
+     * Tarif Ekonomi = harga dasar (tanpa biaya tambahan).
+     */
+    @Override
     public double hitungTotalTarif() {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        return getHargaDasar();
     }
-    
 }

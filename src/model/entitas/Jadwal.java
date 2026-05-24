@@ -8,9 +8,14 @@ public class Jadwal {
     private String stasiunTujuan;
     private double hargaDasar;
     private int kursiTersedia;
+    private String keterangan;
 
     // Constructor, Getter, dan Setter
     public Jadwal(int id, String namaKereta, String kelas, String stasiunAsal, String stasiunTujuan, double hargaDasar, int kursiTersedia) {
+        this(id, namaKereta, kelas, stasiunAsal, stasiunTujuan, hargaDasar, kursiTersedia, "");
+    }
+
+    public Jadwal(int id, String namaKereta, String kelas, String stasiunAsal, String stasiunTujuan, double hargaDasar, int kursiTersedia, String keterangan) {
         this.id = id;
         this.namaKereta = namaKereta;
         this.kelas = kelas;
@@ -18,6 +23,7 @@ public class Jadwal {
         this.stasiunTujuan = stasiunTujuan;
         this.hargaDasar = hargaDasar;
         this.kursiTersedia = kursiTersedia;
+        this.keterangan = keterangan != null ? keterangan : "";
     }
 
     public int getId() { return id; }
@@ -27,4 +33,5 @@ public class Jadwal {
     public String getStasiunTujuan() { return stasiunTujuan; }
     public double getHargaDasar() { return hargaDasar; }
     public int getKursiTersedia() { return kursiTersedia; }
+    public String getKeterangan() { return keterangan; }
 }

@@ -1,123 +1,140 @@
 package view;
 
 import model.entitas.User;
+import model.entitas.Penumpang;
+import model.layanan.TiketKeretaApiDAO;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
-import model.entitas.UserDAO;
 
+/**
+ * LoginFrame adalah tampilan awal untuk autentikasi user.
+ */
 public class LoginFrame extends JFrame {
-    
-    // Deklarasi komponen UI
+
     private JTextField txtUsername;
     private JPasswordField txtPassword;
     private JButton btnLogin;
-    
-    // Deklarasi DAO untuk akses data login
-    private final UserDAO authDAO;
+
+    private final TiketKeretaApiDAO authDAO;
 
     public LoginFrame() {
-        authDAO = new UserDAO();
+        authDAO = new TiketKeretaApiDAO();
         setupUI();
     }
 
     private void setupUI() {
-        // Konfigurasi dasar Frame
-        setTitle("Login - Sistem Enterprise KAI");
-        setSize(350, 220);
+        setTitle("Login - Sistem Tiket Kereta Api");
+        setSize(400, 280);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setLocationRelativeTo(null); // Agar window muncul tepat di tengah layar
+        setLocationRelativeTo(null);
         setLayout(new BorderLayout());
+        setResizable(false);
 
-        // --- PANEL HEADER ---
-        JPanel panelHeader = new JPanel();
-        panelHeader.setBackground(new Color(41, 128, 185)); // Warna biru khas korporat
-        JLabel lblJudul = new JLabel("Silakan Login");
+        // === HEADER ===
+        JPanel headerWrap = new JPanel(new BorderLayout());
+        headerWrap.setBackground(new Color(30, 80, 160));
+        headerWrap.setBorder(BorderFactory.createEmptyBorder(16, 15, 16, 15));
+
+        JLabel lblJudul = new JLabel("Sistem Tiket Kereta Api", SwingConstants.CENTER);
         lblJudul.setForeground(Color.WHITE);
-        lblJudul.setFont(new Font("Arial", Font.BOLD, 18));
-        panelHeader.add(lblJudul);
+        lblJudul.setFont(new Font("Arial", Font.BOLD, 20));
 
-        // --- PANEL FORM ---
-        JPanel panelForm = new JPanel(new GridLayout(2, 2, 10, 15));
-        panelForm.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
-        
-        panelForm.add(new JLabel("Username:"));
+        JLabel lblSub = new JLabel("Silakan masuk untuk melanjutkan", SwingConstants.CENTER);
+        lblSub.setForeground(new Color(180, 210, 255));
+        lblSub.setFont(new Font("Arial", Font.PLAIN, 12));
+
+        headerWrap.add(lblJudul, BorderLayout.CENTER);
+        headerWrap.add(lblSub, BorderLayout.SOUTH);
+
+        // === FORM ===
+        JPanel panelForm = new JPanel(new GridBagLayout());
+        panelForm.setBorder(BorderFactory.createEmptyBorder(25, 40, 10, 40));
+        panelForm.setBackground(Color.WHITE);
+
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.fill = GridBagConstraints.HORIZONTAL;
+        gbc.insets = new Insets(7, 0, 7, 0);
+
+        JLabel lblUname = new JLabel("Username :");
+        lblUname.setFont(new Font("Arial", Font.BOLD, 13));
+        gbc.gridx = 0; gbc.gridy = 0; gbc.weightx = 0.3;
+        panelForm.add(lblUname, gbc);
+
         txtUsername = new JTextField();
-        panelForm.add(txtUsername);
+        txtUsername.setFont(new Font("Arial", Font.PLAIN, 13));
+        txtUsername.setPreferredSize(new Dimension(200, 32));
+        gbc.gridx = 1; gbc.weightx = 0.7;
+        panelForm.add(txtUsername, gbc);
 
-        panelForm.add(new JLabel("Password:"));
+        JLabel lblPass = new JLabel("Password :");
+        lblPass.setFont(new Font("Arial", Font.BOLD, 13));
+        gbc.gridx = 0; gbc.gridy = 1; gbc.weightx = 0.3;
+        panelForm.add(lblPass, gbc);
+
         txtPassword = new JPasswordField();
-        panelForm.add(txtPassword);
+        txtPassword.setFont(new Font("Arial", Font.PLAIN, 13));
+        txtPassword.setPreferredSize(new Dimension(200, 32));
+        gbc.gridx = 1; gbc.weightx = 0.7;
+        panelForm.add(txtPassword, gbc);
 
-        // --- PANEL TOMBOL ---
-        JPanel panelButton = new JPanel();
-        panelButton.setBorder(BorderFactory.createEmptyBorder(0, 0, 15, 0));
-        
-        btnLogin = new JButton("Login Masuk");
-        btnLogin.setBackground(new Color(39, 174, 96)); // Warna hijau untuk tombol aksi
+        // === TOMBOL ===
+        JPanel panelButton = new JPanel(new FlowLayout(FlowLayout.CENTER, 0, 12));
+        panelButton.setBackground(Color.WHITE);
+
+        btnLogin = new JButton("  LOGIN  ");
+        btnLogin.setBackground(new Color(30, 80, 160));
         btnLogin.setForeground(Color.WHITE);
+        btnLogin.setFont(new Font("Arial", Font.BOLD, 14));
         btnLogin.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        btnLogin.setFocusPainted(false);
+        btnLogin.setOpaque(true);
+        btnLogin.setBorder(BorderFactory.createEmptyBorder(10, 40, 10, 40));
         panelButton.add(btnLogin);
 
-        // --- EVENT LISTENER ---
-        // Menangkap aksi klik pada tombol login
+        // === EVENT ===
         btnLogin.addActionListener(this::prosesLogin);
+        getRootPane().setDefaultButton(btnLogin);
 
-        // --- PENYUSUNAN KE FRAME ---
-        add(panelHeader, BorderLayout.NORTH);
+        // === LAYOUT ===
+        add(headerWrap, BorderLayout.NORTH);
         add(panelForm, BorderLayout.CENTER);
         add(panelButton, BorderLayout.SOUTH);
-        
-        // Memungkinkan pengguna menekan tombol "Enter" di keyboard untuk login
-        getRootPane().setDefaultButton(btnLogin);
     }
 
-    /**
-     * Logika utama untuk memproses login.
-     * Mengambil data dari form, memanggil DAO, dan menerapkan Polimorfisme Frame.
-     */
     private void prosesLogin(ActionEvent e) {
-        String username = txtUsername.getText();
+        String username = txtUsername.getText().trim();
         String password = new String(txtPassword.getPassword());
 
-        // Validasi input kosong (Mencegah NullPointerException atau error query)
         if (username.isEmpty() || password.isEmpty()) {
-            JOptionPane.showMessageDialog(this, 
-                "Username dan Password tidak boleh kosong!", 
+            JOptionPane.showMessageDialog(this,
+                "Username dan Password tidak boleh kosong!",
                 "Peringatan", JOptionPane.WARNING_MESSAGE);
             return;
         }
 
         try {
-            // Memanggil AuthDAO untuk mencocokkan data dengan database
             User user = authDAO.login(username, password);
 
             if (user != null) {
-                JOptionPane.showMessageDialog(this, 
-                    "Selamat datang, " + user.getUsername() + "!\nLogin sebagai: " + user.getRole(), 
-                    "Login Berhasil", JOptionPane.INFORMATION_MESSAGE);
-                
-                // Menutup (destroy) window Login
-                this.dispose(); 
-
-                // Menerapkan konsep OOP: Arahkan ke Dashboard yang sesuai berdasarkan Role
+                this.dispose();
                 if ("ADMIN".equals(user.getRole())) {
-                    new AdminFrame().setVisible(true);
+                    new AdminFrame(user).setVisible(true);
                 } else {
-                    // Jika penumpang, kirimkan ID-nya ke MainFrame untuk pencatatan transaksi
-                    new MainFrame(user.getId()).setVisible(true); 
+                    new PenumpangFrame((Penumpang) user).setVisible(true);
                 }
             } else {
-                JOptionPane.showMessageDialog(this, 
-                    "Username atau Password salah!", 
+                JOptionPane.showMessageDialog(this,
+                    "Username atau Password salah!",
                     "Login Gagal", JOptionPane.ERROR_MESSAGE);
+                txtPassword.setText("");
             }
         } catch (Exception ex) {
-            JOptionPane.showMessageDialog(this, 
-                "Terjadi kesalahan koneksi database:\n" + ex.getMessage(), 
+            JOptionPane.showMessageDialog(this,
+                "Terjadi kesalahan koneksi database:\n" + ex.getMessage(),
                 "Error Sistem", JOptionPane.ERROR_MESSAGE);
-            ex.printStackTrace(); // Cetak log error ke console untuk debugging
+            ex.printStackTrace();
         }
     }
 }

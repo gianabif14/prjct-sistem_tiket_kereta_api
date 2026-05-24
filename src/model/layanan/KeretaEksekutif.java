@@ -1,20 +1,22 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package model.layanan;
 
 /**
- *
- * @author giana
+ * KeretaEksekutif mewarisi Kereta dan menambah biaya layanan 20%.
+ * Menerapkan pilar OOP: Inheritance dan Polymorphism.
  */
-public class KeretaEksekutif {
+public class KeretaEksekutif extends Kereta {
 
-    public KeretaEksekutif(String temp, double hargaDasar) {
+    private static final double BIAYA_LAYANAN_PERSEN = 0.20;
+
+    public KeretaEksekutif(String namaKereta, double hargaDasar) {
+        super(namaKereta, hargaDasar);
     }
 
+    /**
+     * Tarif Eksekutif = harga dasar + 20% biaya layanan.
+     */
+    @Override
     public double hitungTotalTarif() {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        return getHargaDasar() * (1 + BIAYA_LAYANAN_PERSEN);
     }
-    
 }

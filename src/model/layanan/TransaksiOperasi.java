@@ -1,13 +1,13 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Interface.java to edit this template
- */
 package model.layanan;
 
 /**
- *
- * @author giana
+ * Interface TransaksiOperasi mendefinisikan kontrak operasi transaksi tiket.
+ * Menerapkan pilar OOP: Abstraction melalui interface.
  */
 public interface TransaksiOperasi {
-    
+    /**
+     * Memproses pemesanan tiket.
+     * @return String berformat "STATUS|PESAN"
+     */
+    String prosesTiket(int idUser, int idJadwal, double hargaDasar, String kelas);
 }
