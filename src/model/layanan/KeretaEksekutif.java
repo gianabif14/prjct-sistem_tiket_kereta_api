@@ -9,5 +9,12 @@ package model.layanan;
  * @author giana
  */
 public class KeretaEksekutif {
+
+    public KeretaEksekutif(String temp, double hargaDasar) {
+    }
+
+    public double hitungTotalTarif() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
     
 }
