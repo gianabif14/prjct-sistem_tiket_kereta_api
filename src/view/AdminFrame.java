@@ -133,10 +133,19 @@ public class AdminFrame extends JFrame {
     }
     private void updateUser() {
         int r=tabelUser.getSelectedRow(); if(r<0){warn("Pilih user!");return;}
+        
+        int userId = (int)modelUser.getValueAt(r,0);
+        String selectedRole = (String)comboURole.getSelectedItem();
+        
+        if (userId == admin.getId() && "PENUMPANG".equals(selectedRole)) {
+            warn("Anda tidak dapat mengubah role Anda sendiri menjadi PENUMPANG!");
+            return;
+        }
+
         try {
-            userDAO.updateUser((int)modelUser.getValueAt(r,0),txtUUsername.getText().trim(),
-                txtUPassword.getText().trim(),Double.parseDouble(txtUSaldo.getText().trim()),
-                (String)comboURole.getSelectedItem());
+            userDAO.updateUser(userId, txtUUsername.getText().trim(),
+                txtUPassword.getText().trim(), Double.parseDouble(txtUSaldo.getText().trim()),
+                selectedRole);
             info("User diperbarui!"); refreshUser(); bersihUser();
         } catch(NumberFormatException x){warn("Saldo harus angka!");}
         catch(SQLException x){dbErr("update user",x);}
@@ -180,14 +189,15 @@ public class AdminFrame extends JFrame {
         txtJHarga=field(); txtJHarga.setText("0"); txtJKursi=field(); txtJKursi.setText("100");
         comboJKelas=new JComboBox<>(new String[]{"Ekonomi","Bisnis","Eksekutif"});
 
-        JPanel fields=new JPanel(new GridLayout(3,4,12,8)); fields.setBackground(Color.WHITE);
+        JPanel fields=new JPanel(new GridLayout(4,4,12,8)); fields.setBackground(Color.WHITE);
         fields.add(bold("Nama Kereta:"));    fields.add(txtJNama);
-        fields.add(bold("Keterangan:"));     fields.add(txtJKet);
         fields.add(bold("Kelas:"));          fields.add(comboJKelas);
         fields.add(bold("Stasiun Asal:"));   fields.add(txtJAsal);
         fields.add(bold("Stasiun Tujuan:")); fields.add(txtJTujuan);
         fields.add(bold("Harga Dasar:"));    fields.add(txtJHarga);
         fields.add(bold("Kursi Tersedia:")); fields.add(txtJKursi);
+        fields.add(bold("Keterangan:"));     fields.add(txtJKet);
+        fields.add(new JLabel(""));          fields.add(new JLabel(""));
 
         JPanel btns=new JPanel(new FlowLayout(FlowLayout.CENTER,12,4)); btns.setBackground(Color.WHITE);
         JButton bT=btn("  Tambah  ",new Color(34,140,60)),bU=btn("  Update  ",new Color(200,130,0)),
