@@ -92,13 +92,14 @@ public class TopupDAO {
             String getReq = "SELECT id_user, jumlah FROM topup_request WHERE id = ? AND status = 'PENDING'";
             try (PreparedStatement ps = conn.prepareStatement(getReq)) {
                 ps.setInt(1, idRequest);
-                ResultSet rs = ps.executeQuery();
-                if (!rs.next()) {
-                    conn.rollback();
-                    return false; // Sudah diproses atau tidak ditemukan
+                try (ResultSet rs = ps.executeQuery()) {
+                    if (!rs.next()) {
+                        conn.rollback();
+                        return false; // Sudah diproses atau tidak ditemukan
+                    }
+                    idUser = rs.getInt("id_user");
+                    jumlah = rs.getDouble("jumlah");
                 }
-                idUser = rs.getInt("id_user");
-                jumlah = rs.getDouble("jumlah");
             }
 
             // Tambah saldo user

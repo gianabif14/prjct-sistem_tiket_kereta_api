@@ -57,4 +57,15 @@ public class BookingController implements TransaksiOperasi {
             return "ERROR|Kesalahan Sistem Database: " + e.getMessage();
         }
     }
+
+    public double getHargaPreview(double hargaDasar, String kelas) {
+        switch (kelas.toLowerCase()) {
+            case "eksekutif":
+                return new KeretaEksekutif("temp", hargaDasar).hitungTotalTarif();
+            case "bisnis":
+                return new KeretaBisnis("temp", hargaDasar).hitungTotalTarif();
+            default: // ekonomi
+                return new KeretaEkonomi("temp", hargaDasar).hitungTotalTarif();
+        }
+    }
 }

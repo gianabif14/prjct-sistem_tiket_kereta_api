@@ -5,7 +5,7 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 
 public class Connector {
-    private static Connection connection;
+    private static volatile Connection connection;
     private static final String URL = "jdbc:mysql://localhost:3306/kereta_db";
     private static final String USER = "root";
     private static final String PASS = "";
@@ -13,7 +13,7 @@ public class Connector {
     // Private constructor mencegah inisialisasi dari luar
     private Connector() {}
 
-    public static Connection getConnection() throws SQLException {
+    public static synchronized Connection getConnection() throws SQLException {
         if (connection == null || connection.isClosed()) {
             connection = DriverManager.getConnection(URL, USER, PASS);
         }

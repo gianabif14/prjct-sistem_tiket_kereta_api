@@ -72,7 +72,7 @@ public class AdminFrame extends JFrame {
         add(tabs,BorderLayout.CENTER);
     }
 
-    // ── TAB 1: USER ──────────────────────────────────────────────────────────
+    //  TAB 1: USER 
     private JPanel buildTabUser() {
         JPanel p = new JPanel(new BorderLayout(0,8));
         p.setBorder(BorderFactory.createEmptyBorder(10,10,10,10));
@@ -166,7 +166,7 @@ public class AdminFrame extends JFrame {
         comboURole.setSelectedIndex(0); tabelUser.clearSelection();
     }
 
-    // ── TAB 2: JADWAL ────────────────────────────────────────────────────────
+    //  TAB 2: JADWAL 
     private JPanel buildTabJadwal() {
         JPanel p = new JPanel(new BorderLayout(0,8));
         p.setBorder(BorderFactory.createEmptyBorder(10,10,10,10)); p.setBackground(Color.WHITE);
@@ -260,7 +260,7 @@ public class AdminFrame extends JFrame {
         txtJHarga.setText("0");txtJKursi.setText("100");comboJKelas.setSelectedIndex(0);tabelJadwal.clearSelection();
     }
 
-    // ── TAB 3: RIWAYAT ───────────────────────────────────────────────────────
+    //  TAB 3: RIWAYAT 
     private JPanel buildTabRiwayat() {
         JPanel p = new JPanel(new BorderLayout(0,8));
         p.setBorder(BorderFactory.createEmptyBorder(10,10,10,10)); p.setBackground(Color.WHITE);
@@ -273,7 +273,7 @@ public class AdminFrame extends JFrame {
         int[] ws={35,100,110,150,80,110,110,130,160};
         for(int i=0;i<ws.length;i++) tbl.getColumnModel().getColumn(i).setPreferredWidth(ws[i]);
 
-        JButton btnR=btn("  ↺ Refresh  ",new Color(30,80,160)); btnR.addActionListener(e->refreshRiwayat());
+        JButton btnR=btn("  Refresh  ",new Color(30,80,160)); btnR.addActionListener(e->refreshRiwayat());
         JPanel bot=new JPanel(new FlowLayout(FlowLayout.RIGHT,0,4)); bot.setBackground(Color.WHITE); bot.add(btnR);
 
         p.add(lbl,BorderLayout.NORTH); p.add(new JScrollPane(tbl),BorderLayout.CENTER); p.add(bot,BorderLayout.SOUTH);
@@ -286,7 +286,7 @@ public class AdminFrame extends JFrame {
         } catch(SQLException x){dbErr("muat riwayat",x);}
     }
 
-    // ── TAB 4: PERMINTAAN TOP UP ─────────────────────────────────────────────
+    //  TAB 4: PERMINTAAN TOP UP 
     private JPanel buildTabTopup() {
         JPanel p = new JPanel(new BorderLayout(0,8));
         p.setBorder(BorderFactory.createEmptyBorder(10,10,10,10)); p.setBackground(Color.WHITE);
@@ -322,9 +322,9 @@ public class AdminFrame extends JFrame {
 
         // Tombol aksi
         JPanel bot=new JPanel(new FlowLayout(FlowLayout.CENTER,16,6)); bot.setBackground(Color.WHITE);
-        JButton btnTerima=btn("  ✔ Terima  ",new Color(34,140,60));
-        JButton btnTolak =btn("  ✘ Tolak  ",new Color(200,50,50));
-        JButton btnR     =btn("  ↺ Refresh  ",new Color(30,80,160));
+        JButton btnTerima=btn("  Terima  ",new Color(34,140,60));
+        JButton btnTolak =btn("  Tolak  ",new Color(200,50,50));
+        JButton btnR     =btn("  Refresh  ",new Color(30,80,160));
 
         btnTerima.addActionListener(e -> {
             int r=tabelTopup.getSelectedRow(); if(r<0){warn("Pilih permintaan terlebih dahulu!");return;}
@@ -372,7 +372,7 @@ public class AdminFrame extends JFrame {
         } catch(SQLException x){dbErr("muat topup",x);}
     }
 
-    // ── HELPERS ───────────────────────────────────────────────────────────────
+    //  HELPERS 
     private JTable buildTable(DefaultTableModel model) {
         JTable t=new JTable(model);
         t.setFont(new Font("Arial",Font.PLAIN,12)); t.setRowHeight(26);

@@ -2,7 +2,7 @@ package view;
 
 import model.entitas.User;
 import model.entitas.Penumpang;
-import model.layanan.TiketKeretaApiDAO;
+import controller.LoginController;
 
 import javax.swing.*;
 import java.awt.*;
@@ -17,10 +17,10 @@ public class LoginFrame extends JFrame {
     private JPasswordField txtPassword;
     private JButton btnLogin;
 
-    private final TiketKeretaApiDAO authDAO;
+    private final LoginController loginController;
 
     public LoginFrame() {
-        authDAO = new TiketKeretaApiDAO();
+        loginController = new LoginController();
         setupUI();
     }
 
@@ -107,15 +107,8 @@ public class LoginFrame extends JFrame {
         String username = txtUsername.getText().trim();
         String password = new String(txtPassword.getPassword());
 
-        if (username.isEmpty() || password.isEmpty()) {
-            JOptionPane.showMessageDialog(this,
-                "Username dan Password tidak boleh kosong!",
-                "Peringatan", JOptionPane.WARNING_MESSAGE);
-            return;
-        }
-
         try {
-            User user = authDAO.login(username, password);
+            User user = loginController.login(username, password);
 
             if (user != null) {
                 this.dispose();
@@ -130,6 +123,10 @@ public class LoginFrame extends JFrame {
                     "Login Gagal", JOptionPane.ERROR_MESSAGE);
                 txtPassword.setText("");
             }
+        } catch (IllegalArgumentException ex) {
+            JOptionPane.showMessageDialog(this,
+                ex.getMessage(),
+                "Peringatan", JOptionPane.WARNING_MESSAGE);
         } catch (Exception ex) {
             JOptionPane.showMessageDialog(this,
                 "Terjadi kesalahan koneksi database:\n" + ex.getMessage(),

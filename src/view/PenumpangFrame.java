@@ -79,7 +79,7 @@ public class PenumpangFrame extends JFrame {
         add(tabs, BorderLayout.CENTER);
     }
 
-    // ── HEADER ──────────────────────────────────────────────────────────────
+    //  HEADER 
     private JPanel buildHeader() {
         JPanel h = new JPanel(new BorderLayout());
         h.setBackground(new Color(30, 80, 160));
@@ -116,10 +116,13 @@ public class PenumpangFrame extends JFrame {
             double saldoBaru = userDAO.getSaldoById(penumpang.getId());
             penumpang.setSaldoWallet(saldoBaru);
             lblSaldo.setText("Saldo: " + FMT.format(saldoBaru));
-        } catch (SQLException ex) { ex.printStackTrace(); }
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+            JOptionPane.showMessageDialog(this, "Gagal memuat saldo: " + ex.getMessage(), "Error Database", JOptionPane.ERROR_MESSAGE);
+        }
     }
 
-    // ── TAB 1: PESAN TIKET ───────────────────────────────────────────────────
+    //  TAB 1: PESAN TIKET 
     private JPanel buildTabPesan() {
         JPanel p = new JPanel(new BorderLayout());
         p.setBackground(Color.WHITE);
@@ -189,7 +192,7 @@ public class PenumpangFrame extends JFrame {
         return p;
     }
 
-    // ── TAB 2: RIWAYAT ───────────────────────────────────────────────────────
+    //  TAB 2: RIWAYAT 
     private JPanel buildTabRiwayat() {
         JPanel p = new JPanel(new BorderLayout(0, 8));
         p.setBorder(BorderFactory.createEmptyBorder(12, 12, 12, 12));
@@ -202,7 +205,7 @@ public class PenumpangFrame extends JFrame {
         modelRiwayat = new DefaultTableModel(cols, 0) { @Override public boolean isCellEditable(int r,int c){return false;} };
         JTable tbl = buildTable(modelRiwayat);
 
-        JButton btnRefresh = btn("  ↺ Refresh  ", new Color(30,80,160));
+        JButton btnRefresh = btn("  Refresh  ", new Color(30,80,160));
         btnRefresh.addActionListener(e -> refreshRiwayat());
         JPanel bot = new JPanel(new FlowLayout(FlowLayout.RIGHT,0,4)); bot.setBackground(Color.WHITE); bot.add(btnRefresh);
 
@@ -219,10 +222,13 @@ public class PenumpangFrame extends JFrame {
             for (Object[] r : riwayatDAO.getRiwayatByUser(penumpang.getId())) {
                 modelRiwayat.addRow(new Object[]{n++, r[1], r[2], r[3], r[4], r[5], FMT.format(r[6]), r[7]});
             }
-        } catch (SQLException ex) { ex.printStackTrace(); }
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+            JOptionPane.showMessageDialog(this, "Gagal memuat riwayat: " + ex.getMessage(), "Error Database", JOptionPane.ERROR_MESSAGE);
+        }
     }
 
-    // ── TAB 3: TOP UP ────────────────────────────────────────────────────────
+    //  TAB 3: TOP UP 
     private JPanel buildTabTopup() {
         JPanel p = new JPanel(new BorderLayout(0, 12));
         p.setBorder(BorderFactory.createEmptyBorder(16, 20, 12, 20));
@@ -335,15 +341,21 @@ public class PenumpangFrame extends JFrame {
             for (Object[] r : topupDAO.getRequestsByUser(penumpang.getId())) {
                 modelTopup.addRow(new Object[]{n++, FMT.format(r[1]), r[2], r[3], r[4] != null ? r[4] : "-"});
             }
-        } catch (SQLException ex) { ex.printStackTrace(); }
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+            JOptionPane.showMessageDialog(this, "Gagal memuat riwayat top up: " + ex.getMessage(), "Error Database", JOptionPane.ERROR_MESSAGE);
+        }
     }
 
-    // ── LOGIKA BOOKING ────────────────────────────────────────────────────────
+    //  LOGIKA BOOKING 
     private void loadStasiunAsal() {
         try {
             comboAsal.removeAllItems(); comboAsal.addItem("-- Pilih Stasiun Asal --");
             for (String s : tiketDAO.getAllStasiunAsal()) comboAsal.addItem(s);
-        } catch (SQLException ex) { ex.printStackTrace(); }
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+            JOptionPane.showMessageDialog(this, "Gagal memuat stasiun asal: " + ex.getMessage(), "Error Database", JOptionPane.ERROR_MESSAGE);
+        }
     }
 
     private void loadStasiunTujuan() {
@@ -353,7 +365,10 @@ public class PenumpangFrame extends JFrame {
         try {
             comboTujuan.addItem("-- Pilih Stasiun Tujuan --");
             for (String s : tiketDAO.getStasiunTujuanByAsal(asal)) comboTujuan.addItem(s);
-        } catch (SQLException ex) { ex.printStackTrace(); }
+        } catch (SQLException ex) {
+            ex.printStackTrace();
+            JOptionPane.showMessageDialog(this, "Gagal memuat stasiun tujuan: " + ex.getMessage(), "Error Database", JOptionPane.ERROR_MESSAGE);
+        }
     }
 
     private void cariKereta() {
@@ -371,7 +386,7 @@ public class PenumpangFrame extends JFrame {
             for (Jadwal j : hasilCari) {
                 String kursi = j.getKursiTersedia()>0 ? "Kursi: "+j.getKursiTersedia() : "HABIS";
                 modelKereta.addElement(String.format("%-26s | %-10s | %-18s | %s",
-                    j.getNamaKereta(), j.getKelas(), FMT.format(hitungHarga(j.getHargaDasar(),j.getKelas())), kursi));
+                    j.getNamaKereta(), j.getKelas(), FMT.format(controller.getHargaPreview(j.getHargaDasar(),j.getKelas())), kursi));
             }
             panelCari.setVisible(false); panelHasil.setVisible(true);
         } catch (SQLException ex) {
@@ -386,7 +401,7 @@ public class PenumpangFrame extends JFrame {
         if (idx < 0) { JOptionPane.showMessageDialog(this,"Pilih kereta terlebih dahulu!","Peringatan",JOptionPane.WARNING_MESSAGE); return; }
         Jadwal j = hasilCari.get(idx);
         if (j.getKursiTersedia()<=0) { JOptionPane.showMessageDialog(this,"Kursi habis!","Info",JOptionPane.WARNING_MESSAGE); return; }
-        double harga = hitungHarga(j.getHargaDasar(), j.getKelas());
+        double harga = controller.getHargaPreview(j.getHargaDasar(), j.getKelas());
         int ok = JOptionPane.showConfirmDialog(this,
             "Kereta  : "+j.getNamaKereta()+"\nKelas   : "+j.getKelas()+
             "\nRute    : "+j.getStasiunAsal()+" → "+j.getStasiunTujuan()+
@@ -405,15 +420,9 @@ public class PenumpangFrame extends JFrame {
         }
     }
 
-    private double hitungHarga(double h, String kelas) {
-        switch (kelas.toLowerCase()) {
-            case "eksekutif": return h * 1.20;
-            case "bisnis":    return h * 1.10;
-            default:          return h;
-        }
-    }
 
-    // ── HELPERS UI ────────────────────────────────────────────────────────────
+
+    //  HELPERS UI 
     private JButton btn(String text, Color bg) {
         JButton b = new JButton(text);
         b.setBackground(bg); b.setForeground(Color.WHITE);
